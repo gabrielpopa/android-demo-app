@@ -165,12 +165,15 @@ public class ImageClassificationActivity extends AbstractCameraXActivity<ImageCl
             Utils.assetFilePath(this, getModuleAssetName())).getAbsolutePath();
         mModule = Module.load(moduleFileAbsoluteFilePath);
 
+        // Allocate image buffer
         mInputTensorBuffer =
             Tensor.allocateFloatBuffer(3 * INPUT_TENSOR_WIDTH * INPUT_TENSOR_HEIGHT);
         mInputTensor = Tensor.fromBlob(mInputTensorBuffer, new long[]{1, 3, INPUT_TENSOR_HEIGHT, INPUT_TENSOR_WIDTH});
       }
 
       final long startTime = SystemClock.elapsedRealtime();
+
+      // Put image into float buffer.
       TensorImageUtils.imageYUV420CenterCropToFloatBuffer(
           image.getImage(), rotationDegrees,
           INPUT_TENSOR_WIDTH, INPUT_TENSOR_HEIGHT,

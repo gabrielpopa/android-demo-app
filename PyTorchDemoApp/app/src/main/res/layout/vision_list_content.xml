@@ -15,11 +15,41 @@
         android:textAppearance="@style/TextAppearanceMainVisionNlp" />
 
     <org.pytorch.demo.ListCardView
+        android:id="@+id/inception_v3_google_click_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/list_content_margin"
+        app:titleRes="@string/vision_card_inception_title"
+        app:descriptionRes="@string/vision_card_qmobilenet_description"
+        app:imageRes="@drawable/ic_image_classification_s"
+        android:elevation="1dp"/>
+
+    <org.pytorch.demo.ListCardView
         android:id="@+id/vision_card_qmobilenet_click_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/list_content_margin"
         app:titleRes="@string/vision_card_qmobilenet_title"
+        app:descriptionRes="@string/vision_card_qmobilenet_description"
+        app:imageRes="@drawable/ic_image_classification_s"
+        android:elevation="1dp"/>
+
+    <org.pytorch.demo.ListCardView
+        android:id="@+id/vision_card_qmobilenet_s_click_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/list_content_margin"
+        app:titleRes="@string/vision_card_qmobilenet_title_s"
+        app:descriptionRes="@string/vision_card_qmobilenet_description"
+        app:imageRes="@drawable/ic_image_classification_s"
+        android:elevation="1dp"/>
+
+    <org.pytorch.demo.ListCardView
+        android:id="@+id/vision_card_qmobilenet_t_click_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/list_content_margin"
+        app:titleRes="@string/vision_card_qmobilenet_title_t"
         app:descriptionRes="@string/vision_card_qmobilenet_description"
         app:imageRes="@drawable/ic_image_classification_s"
         android:elevation="1dp"/>
@@ -33,4 +63,34 @@
         app:descriptionRes="@string/vision_card_resnet_description"
         app:imageRes="@drawable/ic_image_classification_s"
         app:titleRes="@string/vision_card_resnet_title" />
+
+    <org.pytorch.demo.ListCardView
+        android:id="@+id/vision_card_resnet_exported_click_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/list_content_margin"
+        android:elevation="1dp"
+        app:descriptionRes="@string/vision_card_resnet_description"
+        app:imageRes="@drawable/ic_image_classification_s"
+        app:titleRes="@string/vision_card_resnet2_title" />
+
+    <org.pytorch.demo.ListCardView
+        android:id="@+id/vision_card_resnet_trace_click_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/list_content_margin"
+        android:elevation="1dp"
+        app:descriptionRes="@string/vision_card_resnet_description"
+        app:imageRes="@drawable/ic_image_classification_s"
+        app:titleRes="@string/vision_card_resnet3_title" />
+
+    <org.pytorch.demo.ListCardView
+        android:id="@+id/vision_card_vgg_click_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/list_content_margin"
+        android:elevation="1dp"
+        app:descriptionRes="@string/vision_card_vgg_description"
+        app:imageRes="@drawable/ic_image_classification_s"
+        app:titleRes="@string/vision_card_vgg_title" />
 </LinearLayout>
