@@ -17,7 +17,7 @@ import org.pytorch.demo.Utils;
 import org.pytorch.demo.vision.view.ResultRowView;
 
 import java.io.File;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
 import androidx.annotation.Nullable;
@@ -27,13 +27,13 @@ public class TextClassificationActivity extends BaseModuleActivity {
 
   public static final String INTENT_MODULE_ASSET_NAME = "INTENT_MODULE_ASSET_NAME";
 
-  private static final long EDIT_TEXT_STOP_DELAY = 600l;
+  private static final long EDIT_TEXT_STOP_DELAY = 600L;
   private static final int TOP_K = 3;
   private static final String SCORES_FORMAT = "%.2f";
 
   private EditText mEditText;
   private View mResultContent;
-  private ResultRowView[] mResultRowViews = new ResultRowView[3];
+  private final ResultRowView[] mResultRowViews = new ResultRowView[3];
 
   private Module mModule;
   private String mModuleAssetName;
@@ -51,7 +51,7 @@ public class TextClassificationActivity extends BaseModuleActivity {
     }
   }
 
-  private Runnable mOnEditTextStopRunnable = () -> {
+  private final Runnable mOnEditTextStopRunnable = () -> {
     final String text = mEditText.getText().toString();
     mBackgroundHandler.post(() -> {
       if (TextUtils.equals(text, mLastBgHandledText)) {
@@ -59,7 +59,7 @@ public class TextClassificationActivity extends BaseModuleActivity {
       }
 
       if (TextUtils.isEmpty(text)) {
-        runOnUiThread(() -> applyUIEmptyTextState());
+        runOnUiThread(this::applyUIEmptyTextState);
         mLastBgHandledText = null;
         return;
       }
@@ -124,7 +124,7 @@ public class TextClassificationActivity extends BaseModuleActivity {
 
       mModuleClasses = moduleClasses;
     }
-    byte[] bytes = text.getBytes(Charset.forName("UTF-8"));
+    byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
     final long[] shape = new long[]{1, bytes.length};
     final Tensor inputTensor = Tensor.fromBlobUnsigned(bytes, shape);
 
