@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="org.pytorch.demo">
 
     <application
@@ -18,16 +19,21 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".MainActivity" />
         <activity android:name=".vision.VisionListActivity" />
         <activity android:name=".nlp.NLPListActivity" />
         <activity
             android:name=".vision.ImageClassificationActivity"
-            android:label="@string/image_classification_title"></activity>
+            android:label="@string/image_classification_title" />
+
+        <activity
+            android:name=".vision.CameraSegmentationActivity"
+            android:label="@string/image_classification_title" />
         <activity android:name=".nlp.TextClassificationActivity" />
 
     </application>
 
-    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.CAMERA"
+        tools:ignore="ManifestOrder" />
 
 </manifest>

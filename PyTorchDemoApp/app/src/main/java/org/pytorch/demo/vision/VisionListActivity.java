@@ -13,8 +13,8 @@ public class VisionListActivity extends AbstractListActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     findViewById(R.id.inception_v3_google_click_area).setOnClickListener(v -> {
-      final Intent intent = new Intent(VisionListActivity.this, ImageClassificationActivity.class);
-      intent.putExtra(ImageClassificationActivity.INTENT_MODULE_ASSET_NAME, "inception.pt");
+      final Intent intent = new Intent(VisionListActivity.this, CameraSegmentationActivity.class);
+      intent.putExtra(ImageClassificationActivity.INTENT_MODULE_ASSET_NAME, "deeplabv3_scripted.pt");
       intent.putExtra(ImageClassificationActivity.INTENT_INFO_VIEW_TYPE,
               InfoViewFactory.INFO_VIEW_TYPE_IMAGE_CLASSIFICATION_QMOBILENET);
       startActivity(intent);
@@ -34,14 +34,6 @@ public class VisionListActivity extends AbstractListActivity {
               InfoViewFactory.INFO_VIEW_TYPE_IMAGE_CLASSIFICATION_RESNET);
       startActivity(intent);
     });
-    findViewById(R.id.vision_card_qmobilenet_t_click_area).setOnClickListener(v -> {
-      final Intent intent = new Intent(VisionListActivity.this, ImageClassificationActivity.class);
-
-      intent.putExtra(ImageClassificationActivity.INTENT_MODULE_ASSET_NAME, "mobilenet_v2_trace.pt");
-      intent.putExtra(ImageClassificationActivity.INTENT_INFO_VIEW_TYPE,
-              InfoViewFactory.INFO_VIEW_TYPE_IMAGE_CLASSIFICATION_RESNET);
-      startActivity(intent);
-    });
 
     findViewById(R.id.vision_card_resnet_click_area).setOnClickListener(v -> {
       final Intent intent = new Intent(VisionListActivity.this, ImageClassificationActivity.class);
@@ -56,13 +48,6 @@ public class VisionListActivity extends AbstractListActivity {
       intent.putExtra(ImageClassificationActivity.INTENT_MODULE_ASSET_NAME, "resnet18_script.pt");
       intent.putExtra(ImageClassificationActivity.INTENT_INFO_VIEW_TYPE,
               InfoViewFactory.INFO_VIEW_TYPE_IMAGE_CLASSIFICATION_RESNET);
-      startActivity(intent);
-    });
-    findViewById(R.id.vision_card_vgg_click_area).setOnClickListener(v -> {
-      final Intent intent = new Intent(VisionListActivity.this, ImageClassificationActivity.class);
-      intent.putExtra(ImageClassificationActivity.INTENT_MODULE_ASSET_NAME, "vgg.pt");
-      intent.putExtra(ImageClassificationActivity.INTENT_INFO_VIEW_TYPE,
-              InfoViewFactory.INFO_VIEW_TYPE_IMAGE_CLASSIFICATION_QMOBILENET);
       startActivity(intent);
     });
   }
