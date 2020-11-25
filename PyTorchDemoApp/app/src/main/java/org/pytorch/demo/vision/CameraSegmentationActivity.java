@@ -9,7 +9,6 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewStub;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.pytorch.IValue;
@@ -18,7 +17,6 @@ import org.pytorch.Tensor;
 import org.pytorch.demo.Constants;
 import org.pytorch.demo.R;
 import org.pytorch.demo.Utils;
-import org.pytorch.demo.vision.view.ResultRowView;
 import org.pytorch.torchvision.TensorImageUtils;
 
 import java.io.File;
@@ -28,6 +26,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Queue;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.camera.core.ImageProxy;
@@ -39,13 +38,11 @@ public class CameraSegmentationActivity extends AbstractCameraXActivity<CameraSe
 
     private static final int INPUT_TENSOR_WIDTH = 224;
     private static final int INPUT_TENSOR_HEIGHT = 224;
-    private static final int TOP_K = 3;
     private static final int MOVING_AVG_PERIOD = 10;
     private static final String FORMAT_MS = "%dms";
     private static final String FORMAT_AVG_MS = "avg:%.0fms";
 
     private static final String FORMAT_FPS = "%.1fFPS";
-    public static final String SCORES_FORMAT = "%.2f";
 
     private static final int CLASSNUM = 21;
     private static final int DOG = 12;
@@ -54,15 +51,12 @@ public class CameraSegmentationActivity extends AbstractCameraXActivity<CameraSe
 
     static class AnalysisResult {
 
-        private final String[] topNClassNames;
-        private final float[] topNScores;
+        private final int[] pixels;
         private final long analysisDuration;
         private final long moduleForwardDuration;
 
-        public AnalysisResult(String[] topNClassNames, float[] topNScores,
-                              long moduleForwardDuration, long analysisDuration) {
-            this.topNClassNames = topNClassNames;
-            this.topNScores = topNScores;
+        public AnalysisResult(@NonNull int[] pixels, long moduleForwardDuration, long analysisDuration) {
+            this.pixels = pixels;
             this.moduleForwardDuration = moduleForwardDuration;
             this.analysisDuration = analysisDuration;
         }
@@ -106,6 +100,13 @@ public class CameraSegmentationActivity extends AbstractCameraXActivity<CameraSe
 
     @Override
     protected void applyToUiAnalyzeImageResult(AnalysisResult result) {
+
+        if (mBitmap == null) {
+            mBitmap = Bitmap.createBitmap(INPUT_TENSOR_WIDTH, INPUT_TENSOR_HEIGHT, Bitmap.Config.ARGB_8888);
+        }
+        mBitmap.setPixels(result.pixels, 0, mBitmap.getWidth(), 0, 0, mBitmap.getWidth(), mBitmap.getHeight());
+        segmentation.setImageBitmap(mBitmap);
+
         mMovingAvgSum += result.moduleForwardDuration;
         mMovingAvgQueue.add(result.moduleForwardDuration);
         if (mMovingAvgQueue.size() > MOVING_AVG_PERIOD) {
@@ -162,7 +163,6 @@ public class CameraSegmentationActivity extends AbstractCameraXActivity<CameraSe
                 final String moduleFileAbsoluteFilePath = new File(
                         Utils.assetFilePath(this, getModuleAssetName())).getAbsolutePath();
                 mModule = Module.load(moduleFileAbsoluteFilePath);
-
                 // Allocate image buffer
                 mInputTensorBuffer =
                         Tensor.allocateFloatBuffer(3 * INPUT_TENSOR_WIDTH * INPUT_TENSOR_HEIGHT);
@@ -181,7 +181,6 @@ public class CameraSegmentationActivity extends AbstractCameraXActivity<CameraSe
 
             final long moduleForwardStartTime = SystemClock.elapsedRealtime();
             Map<String, IValue> outTensors = mModule.forward(IValue.from(mInputTensor)).toDictStringKey();
-            //final Tensor outputTensor = mModule.forward(IValue.from(mInputTensor)).toTensor();
             final long moduleForwardDuration = SystemClock.elapsedRealtime() - moduleForwardStartTime;
 
             final Tensor outputTensor = outTensors.get("out").toTensor();
@@ -194,8 +193,9 @@ public class CameraSegmentationActivity extends AbstractCameraXActivity<CameraSe
                     int maxi = 0, maxj = 0, maxk = 0;
                     double maxnum = -Double.MAX_VALUE;
                     for (int i = 0; i < CLASSNUM; i++) {
-                        if (scoress[i * (width * height) + j * width + k] > maxnum) {
-                            maxnum = scoress[i * (width * height) + j * width + k];
+                        final int i1 = i * (width * height) + j * width + k;
+                        if (scoress[i1] > maxnum) {
+                            maxnum = scoress[i1];
                             maxi = i; maxj = j; maxk = k;
                         }
                     }
@@ -210,36 +210,8 @@ public class CameraSegmentationActivity extends AbstractCameraXActivity<CameraSe
                 }
             }
 
-            if (mBitmap == null) {
-                mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-            }
-
-            Bitmap bmpSegmentation = Bitmap.createScaledBitmap(mBitmap, width, height, true);
-            Bitmap outputBitmap = bmpSegmentation.copy(bmpSegmentation.getConfig(), true);
-            outputBitmap.setPixels(intValues, 0, outputBitmap.getWidth(), 0, 0, outputBitmap.getWidth(), outputBitmap.getHeight());
-            final Bitmap transferredBitmap = Bitmap.createScaledBitmap(outputBitmap, mBitmap.getWidth(), mBitmap.getHeight(), true);
-
-
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    segmentation.setImageBitmap(transferredBitmap);
-                }
-            });
-
-            //final float[] scores = outputTensor.getDataAsFloatArray();
-            final float[] scores = new float[TOP_K];
-            final int[] ixs = Utils.topK(scores, TOP_K);
-
-            final String[] topKClassNames = new String[TOP_K];
-            final float[] topKScores = new float[TOP_K];
-            for (int i = 0; i < TOP_K; i++) {
-                final int ix = ixs[i];
-                topKClassNames[i] = Constants.IMAGENET_CLASSES[ix];
-                topKScores[i] = scores[ix];
-            }
             final long analysisDuration = SystemClock.elapsedRealtime() - startTime;
-            return new AnalysisResult(topKClassNames, topKScores, moduleForwardDuration, analysisDuration);
+            return new AnalysisResult(intValues, moduleForwardDuration, analysisDuration);
         } catch (Exception e) {
             Log.e(Constants.TAG, "Error during image analysis", e);
             mAnalyzeImageErrorState = true;
