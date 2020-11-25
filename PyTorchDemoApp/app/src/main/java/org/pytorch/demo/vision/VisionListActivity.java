@@ -58,13 +58,6 @@ public class VisionListActivity extends AbstractListActivity {
               InfoViewFactory.INFO_VIEW_TYPE_IMAGE_CLASSIFICATION_RESNET);
       startActivity(intent);
     });
-    findViewById(R.id.vision_card_resnet_trace_click_area).setOnClickListener(v -> {
-      final Intent intent = new Intent(VisionListActivity.this, ImageClassificationActivity.class);
-      intent.putExtra(ImageClassificationActivity.INTENT_MODULE_ASSET_NAME, "resnet18_trace.pt");
-      intent.putExtra(ImageClassificationActivity.INTENT_INFO_VIEW_TYPE,
-              InfoViewFactory.INFO_VIEW_TYPE_IMAGE_CLASSIFICATION_RESNET);
-      startActivity(intent);
-    });
     findViewById(R.id.vision_card_vgg_click_area).setOnClickListener(v -> {
       final Intent intent = new Intent(VisionListActivity.this, ImageClassificationActivity.class);
       intent.putExtra(ImageClassificationActivity.INTENT_MODULE_ASSET_NAME, "vgg.pt");
